@@ -1,0 +1,23 @@
+name: Keep Repository Active
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # 每月1号运行
+  workflow_dispatch:
+
+jobs:
+  keep-active:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update timestamp
+        run: |
+          date '+%Y-%m-%d' > .last-update
+          git add .last-update || true
+          git -c user.name='BlueEagle Bot' -c user.email='bot@ahg.codes' \
+            commit -m "chore: keep repository active [skip ci]" || true
+          git push || true
